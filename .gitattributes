@@ -1,3 +1,11 @@
 * text=auto
 *.jpg binary
 *.png binary
+*.docx binary
+*.pptx binary
+*.xlsx binary
+*.pdf binary
+*.zip binary
+assets/index-*.js -whitespace
+assets/index-*.css -whitespace
+axe.min.js -whitespace

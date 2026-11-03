@@ -1,72 +1,63 @@
 # Santa María Reyna de los Ángeles
 
-Portal público e intranet académica del proyecto APF2 Grupo 5. Rediseño independiente basado en el sitio público del colegio de La Perla, Callao. La información académica, las cuentas, los cursos, docentes, notas y actividades de la intranet son ficticios.
+Portal institucional e intranet académica del Grupo 5. El APF3 incorpora mejoras de accesibilidad sobre la experiencia pública utilizada en el APF2. Es un proyecto académico independiente con cuentas y datos ficticios.
 
-## Iniciar el proyecto
+## Ejecutar el sistema
 
-Necesitas Python 3.10 o posterior. No requiere instalar bibliotecas, Node.js ni una base de datos externa.
-
-Abre una terminal en esta carpeta y ejecuta:
+Se necesita Python 3.10 o posterior. Desde la raíz del repositorio:
 
 ```powershell
 python server.py
 ```
 
-También puedes ejecutar `./iniciar.ps1` desde PowerShell. Mantén abierta la terminal mientras uses el proyecto.
+Abrir [el portal](http://127.0.0.1:8000/) o [el ingreso](http://127.0.0.1:8000/intranet). También se puede ejecutar `./iniciar.ps1`. Mantener la terminal abierta. Para otro puerto, usar `python server.py --port 8001`.
 
-Abre [el portal local](http://127.0.0.1:8000/) o [la intranet](http://127.0.0.1:8000/intranet.html). Si el puerto está ocupado, ejecuta `python server.py --port 8001` y usa esa dirección. Ctrl+C detiene el servidor.
+Las rutas y las operaciones requieren este servidor. Abrir el archivo HTML directamente o usar un servidor exclusivamente estático no ejecuta la API de contacto ni la intranet.
 
-Abrir index.html directamente permite ver el portal, pero las consultas y la intranet requieren server.py. `python -m http.server` no implementa la API de esta versión.
+## Mejoras del APF3
+
+- Contraste de numeración y bordes, enlaces subrayados e indicador visible de foco.
+- Preferencias de alto contraste y texto ampliado.
+- Nombres accesibles coherentes con sus etiquetas visibles.
+- Modal de galería con navegación contenida y retorno del foco.
+- Títulos descriptivos y orientación al cambiar de ruta.
+- Errores asociados a campos, resumen de recuperación y comunicación de estados.
+- Revisión de consulta antes del guardado, retorno a edición y confirmación con código.
+- Declaración de accesibilidad parcial en `/accesibilidad`.
+
+Los cambios de apariencia y comportamiento están en `accessibility.css` y `accessibility.js`. El portal usa los recursos compilados de la experiencia pública del APF2 guardados en `assets/index-*.js` y `assets/index-*.css`. Esta copia conserva las fotografías y recursos del proyecto. Los archivos históricos `app.js` y `styles.css` permanecen en el repositorio como referencia de la implementación anterior; el punto de entrada público actual es `index.html`.
+
+La intranet posterior al ingreso conserva los módulos de estudiantes, cursos, horario, evaluaciones, actividades, entregas y comunicados del piloto Python/SQLite. El administrador puede actualizar una nota y el estudiante visualizarla desde otra sesión. Las consultas de demostración se guardan en la bandeja administrativa local y no se envían al colegio.
 
 ## Cuentas de demostración
 
-| Perfil | Usuario | Contraseña | Aula |
-| --- | --- | --- | --- |
-| Administrador | admin | Admin2026! | Coordinación |
-| Estudiante | ana | Alumno2026! | 5.º A de Primaria |
-| Estudiante | luis | Alumno2026! | 5.º A de Primaria |
-| Estudiante | camila | Alumno2026! | 1.º A de Secundaria |
+| Perfil | Usuario | Contraseña |
+| --- | --- | --- |
+| Administrador | admin | Admin2026! |
+| Estudiante | ana | Alumno2026! |
+| Estudiante | luis | Alumno2026! |
+| Estudiante | camila | Alumno2026! |
 
-Registrar un estudiante desde administración también crea su cuenta con el usuario y contraseña de demostración elegidos. Desactivarlo impide el acceso; su historial se conserva.
+`data/santamaria.sqlite3` se inicializa al arrancar y conserva los cambios locales. Esta carpeta está excluida de Git. Las sesiones se mantienen en memoria durante dos horas. Se mantienen cookies HttpOnly/SameSite, protección CSRF en operaciones autenticadas y control de acceso por rol. El servidor escucha solo en 127.0.0.1 y está destinado a demostraciones con datos ficticios.
 
-## Qué cambió
+## Informes y anexos
 
-El portal conserva las siete rutas: Inicio, Nosotros, Inicial, Primaria, Secundaria, Galería y Contacto. Usa el escudo y fotografías obtenidos del sitio del colegio, una identidad visual compartida, navegación adaptable, enlaces por nivel, preguntas frecuentes y galería con filtros y ampliación. El diálogo de imágenes permite cerrar con Escape y devuelve el foco al botón de origen.
+La carpeta [avance informe 3](avance%20informe%203/) contiene el PDF, DOCX, PPTX, XLSX y los ZIP con las evidencias e instrumentos del APF3. El historial de Git conserva la versión APF2.
 
-La intranet incluye inicio de sesión, dashboard por rol, cursos por aula, horario semanal, evaluaciones por bimestre, entrega de respuestas a actividades y comunicados por nivel. El administrador registra y edita estudiantes y cursos, gestiona horarios, actualiza calificaciones, publica actividades y comunicados, revisa respuestas y atiende consultas. Un reporte CSV permite descargar las notas del bimestre seleccionado.
+El informe distingue auditoría técnica de validación con participantes. La conformidad es parcial. El equipo aún debe ejecutar las sesiones inclusivas y verificar el archivo Figma compartido, Stark, lector y zoom nativo. Los datos de participantes del APF2 conservan su carácter de línea base. El apoyo de IA está declarado y debe revisarse frente al límite de la consigna.
 
-Las consultas del portal se guardan con un código de seguimiento y aparecen en la bandeja administrativa. No se envía correo ni se contacta al colegio. Usa datos ficticios.
-
-## Persistencia y arquitectura
-
-Frontend: HTML, CSS y JavaScript sin compilación. Backend: servidor HTTP de Python y SQLite. Se eligió la biblioteca estándar para que el equipo pueda ejecutar el piloto sin instalar dependencias; no se utiliza FastAPI.
-
-`data/santamaria.sqlite3` se crea al primer inicio. Los cambios son compartidos por las sesiones conectadas a este servidor y sobreviven al reinicio. No dependen de localStorage. Las sesiones se mantienen en memoria durante dos horas y se cierran al reiniciar el servidor.
-
-Las contraseñas se almacenan mediante PBKDF2 con sal individual; la sesión utiliza cookie HttpOnly y SameSite, los cambios autenticados requieren token CSRF y la API aplica permisos por rol. El estudiante recibe únicamente los datos de su aula y sus propias notas y entregas. La API valida notas de 0 a 20, fechas, correspondencia entre curso y aula y conflictos de horario. Los cambios académicos generan un registro de auditoría.
-
-Es un piloto local con cuentas públicas de demostración. El servidor escucha solo en 127.0.0.1. No está preparado para operar con datos reales: una implementación institucional necesitaría un servidor de producción, HTTPS, gestión de credenciales, copias de seguridad, políticas de protección de datos y revisión profesional del acceso.
-
-Para recuperar la muestra inicial, detén el servidor, conserva una copia de `data/santamaria.sqlite3` y mueve el archivo a otra ubicación. Al iniciar de nuevo se crea una muestra nueva. No sobrescribas la base si deseas conservar los cambios de tu demostración.
-
-## Verificación realizada
+## Verificación
 
 ```powershell
 python verify_project.py
-node --check app.js
+node --check accessibility.js
 node --check intranet.js
 ```
 
-Las 13 pruebas de integración pasaron el 11 de octubre de 2026. Utilizan una base temporal y verifican autenticación, sesión, acceso por rol, privacidad del estudiante, actualización de notas entre sesiones independientes, persistencia SQLite, validaciones, horarios, cuentas nuevas e inactivas, entregas, comunicados segmentados, seguimiento de consultas, auditoría y cierre de sesión.
+`verify_project.py` utiliza una base temporal para comprobar las rutas públicas, autenticación, permisos, notas, validaciones, horarios, actividades, comunicados, consultas y cierre de sesión. Para repetir axe-core 4.14.0, abrir una ruta con `?auditoria=1` y usar el botón de auditoría. Los JSON originales y las limitaciones están en los anexos. Cero incidencias automáticas no certifica conformidad AA.
 
-Se revisó el proyecto en el navegador en escritorio y móvil de 390 × 844. Se comprobó la navegación pública, las siete páginas sin desbordamiento horizontal, las fotografías, el menú móvil, filtros y cierre de la galería con restauración de foco, validación del contacto, consulta guardada, registro de nota 19 y lectura posterior como estudiante, entrega de tarea y horario semanal. Las capturas técnicas están en `qa-output/`; no son resultados de pruebas con participantes ni evidencia de conformidad WCAG completa.
+## Despliegue
 
-## Documentación y entrega APF2
+La URL de referencia del APF2 es [el portal publicado en Vercel](https://colegio-santa-maria-reyna-angeles.vercel.app/). Esta subida actualiza el repositorio. La API Python y la persistencia SQLite necesitan un entorno que ejecute el servidor y conserve su almacenamiento; una publicación exclusivamente estática no implementa esas operaciones. Verificar cualquier integración automática de despliegue por separado.
 
-Consulta `GUIA_DEMO.md` para el recorrido de sustentación. `assets/FUENTES.md` identifica los recursos institucionales.
-
-Los DOCX y PPTX originales describen la versión anterior basada en selección de perfil y localStorage. Deben actualizarse antes de entregar para reflejar autenticación de demostración, persistencia en SQLite, consultas guardadas y fotografías de archivo. No se modificaron esos documentos en esta tarea.
-
-Este trabajo mejora el producto; no garantiza una nota 20/20. Las mediciones con participantes, SUS y capturas comparables antes/después deben obtenerse realmente. No se fabricaron resultados.
-
-El proyecto se entrega local. Para una URL pública con toda la intranet necesitas alojar el servidor Python y conservar la base SQLite en almacenamiento persistente. GitHub Pages o Netlify Drop solo servirían la parte estática y no ejecutarían esta intranet. No existe un despliegue público verificado.
+`assets/FUENTES.md` documenta los recursos institucionales. El proyecto y los datos de demostración no constituyen un canal oficial del colegio.

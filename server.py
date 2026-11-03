@@ -202,9 +202,11 @@ class Handler(BaseHTTPRequestHandler):
             return
         # Only explicit public assets are served; the database and sources stay private.
         path = unquote(path).lstrip("/") or "index.html"
-        allowed = {"index.html","intranet.html","styles.css","intranet.css","app.js","intranet.js"}
+        if path in {"institucion","inicial","primaria","secundaria","galeria","contacto","intranet","accesibilidad"}:
+            path = "index.html"
+        allowed = {"index.html","intranet.html","styles.css","intranet.css","app.js","intranet.js","accessibility.css","accessibility.js","audit-tools.js","axe.min.js","audit-tools.css","spacing-test.css"}
         file = (ROOT / path).resolve()
-        if not (path in allowed or (path.startswith("assets/") and file.is_relative_to(ROOT / "assets") and file.suffix.lower() in {".png",".jpg",".jpeg",".svg",".webp"})) or not file.is_file():
+        if not (path in allowed or (path.startswith("assets/") and file.is_relative_to(ROOT / "assets") and file.suffix.lower() in {".png",".jpg",".jpeg",".svg",".webp",".js",".css",".woff2"})) or not file.is_file():
             self.send_error(404)
             return
         body = file.read_bytes()
@@ -213,7 +215,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length",str(len(body)))
         self.send_header("X-Content-Type-Options","nosniff")
         self.send_header("Referrer-Policy","strict-origin-when-cross-origin")
-        self.send_header("Content-Security-Policy","default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
+        self.send_header("Content-Security-Policy","default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
         self.end_headers()
         self.wfile.write(body)
 

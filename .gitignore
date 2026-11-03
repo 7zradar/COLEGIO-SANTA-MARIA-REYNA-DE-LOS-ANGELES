@@ -4,3 +4,5 @@ qa-output/
 .publish/
 *.sqlite3
 *.sqlite3-journal
+
+report-work/

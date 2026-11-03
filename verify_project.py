@@ -73,9 +73,9 @@ class IntegrationTests(unittest.TestCase):
 
     def test_public_pages_assets_and_private_files(self):
         c=Client(self.base)
-        for path in ["/","/intranet.html","/app.js","/intranet.js","/assets/logo.png","/assets/foto12.jpg"]:
+        for path in ["/","/institucion","/inicial","/primaria","/secundaria","/galeria","/contacto","/intranet","/accesibilidad","/intranet.html","/app.js","/intranet.js","/assets/logo.png","/assets/foto12.jpg","/assets/index-O6OawQGP.js","/assets/index-CApla5nl.css","/accessibility.js","/accessibility.css","/audit-tools.js"]:
             self.assertEqual(c.request(path)[0],200,path)
-        for path in ["/server.py","/data/santamaria.sqlite3","/assets/../server.py","/README.md"]:
+        for path in ["/server.py","/data/santamaria.sqlite3","/assets/../server.py","/README.md","/avance%20informe%203/APF3_Grupo5_SantaMaria.docx"]:
             self.assertEqual(c.request(path)[0],404,path)
 
     def test_authentication_and_cookie(self):
